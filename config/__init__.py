@@ -1,1 +1,1 @@
-from .defaults import _C as cfg
+from .new_defaults import _C as cfg

@@ -10,7 +10,7 @@ import torch
 import torch.nn as nn
 # Our libs
 from config import cfg
-from dataset import TrainDataset
+from fashion_dataset import TrainDataset
 from models import ModelBuilder, SegmentationModule
 from utils import AverageMeter, parse_devices, setup_logger
 from lib.nn import UserScatteredDataParallel, user_scattered_collate, patch_replication_callback
@@ -141,29 +141,29 @@ def adjust_learning_rate(optimizers, cur_iter, cfg):
 
 def main(cfg, gpus):
     # Network Builders
-    net_encoder = ModelBuilder.build_encoder(
-        arch=cfg.MODEL.arch_encoder.lower(),
-        fc_dim=cfg.MODEL.fc_dim,
-        weights=cfg.MODEL.weights_encoder)
-    net_decoder = ModelBuilder.build_decoder(
-        arch=cfg.MODEL.arch_decoder.lower(),
-        fc_dim=cfg.MODEL.fc_dim,
-        num_class=cfg.DATASET.num_class,
-        weights=cfg.MODEL.weights_decoder)
+    # net_encoder = ModelBuilder.build_encoder(
+    #     arch=cfg.MODEL.arch_encoder.lower(),
+    #     fc_dim=cfg.MODEL.fc_dim,
+    #     weights=cfg.MODEL.weights_encoder)
+    # net_decoder = ModelBuilder.build_decoder(
+    #     arch=cfg.MODEL.arch_decoder.lower(),
+    #     fc_dim=cfg.MODEL.fc_dim,
+    #     num_class=cfg.DATASET.num_class,
+    #     weights=cfg.MODEL.weights_decoder)
 
-    crit = nn.NLLLoss(ignore_index=-1)
+    # crit = nn.NLLLoss(ignore_index=-1)
 
-    if cfg.MODEL.arch_decoder.endswith('deepsup'):
-        segmentation_module = SegmentationModule(
-            net_encoder, net_decoder, crit, cfg.TRAIN.deep_sup_scale)
-    else:
-        segmentation_module = SegmentationModule(
-            net_encoder, net_decoder, crit)
+    # if cfg.MODEL.arch_decoder.endswith('deepsup'):
+    #     segmentation_module = SegmentationModule(
+    #         net_encoder, net_decoder, crit, cfg.TRAIN.deep_sup_scale)
+    # else:
+    #     segmentation_module = SegmentationModule(
+    #         net_encoder, net_decoder, crit)
 
     # Dataset and Loader
     dataset_train = TrainDataset(
-        cfg.DATASET.root_dataset,
-        cfg.DATASET.list_train,
+        cfg.DATASET.image_train,
+        cfg.DATASET.json_train,
         cfg.DATASET,
         batch_per_gpu=cfg.TRAIN.batch_size_per_gpu)
 
@@ -179,6 +179,7 @@ def main(cfg, gpus):
 
     # create loader iterator
     iterator_train = iter(loader_train)
+    batch_data = next(iterator_train)
 
     # load nets into gpu
     if len(gpus) > 1:
