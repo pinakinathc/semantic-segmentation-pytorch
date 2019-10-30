@@ -29,7 +29,9 @@ def train(segmentation_module, iterator, optimizers, history, epoch, cfg):
     tic = time.time()
     for i in range(cfg.TRAIN.epoch_iters):
         # load a batch of data
-        batch_data = next(iterator)
+        batch_data = next(iterator)[0]
+        batch_data['img_data'] = batch_data['img_data'].cuda()
+        batch_data['seg_label'] = batch_data['seg_label'].cuda()
         data_time.update(time.time() - tic)
         segmentation_module.zero_grad()
 
