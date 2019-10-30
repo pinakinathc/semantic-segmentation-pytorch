@@ -11,8 +11,8 @@ _C.DIR = "ckpt/ade20k-resnet50dilated-ppm_deepsup"
 # Dataset
 # -----------------------------------------------------------------------------
 _C.DATASET = CN()
-_C.DATASET.image_train = "./../DeepFashionData/train/image/"
-_C.DATASET.json_train = "./../DeepFashionData/train/annos/"
+_C.DATASET.image_train = "./../validation/image/"
+_C.DATASET.json_train = "./../validation/annos/"
 _C.DATASET.list_val = "./data/validation.odgt"
 _C.DATASET.num_class = 1
 # multiscale train/test, size of short edge (int or tuple)
