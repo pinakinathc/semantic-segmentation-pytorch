@@ -89,8 +89,8 @@ class BaseDataset(torch.utils.data.Dataset):
     def segm_transform(self, segm):
         # to tensor, -1 to 149
         segm = np.array(segm)
-        segm[segm==255] = 150
-        segm[segm!=255] = 0
+        segm[segm!=255] = 1
+        segm[segm==255] = 2
         segm = torch.from_numpy(np.array(segm)).long() - 1
         return segm
 
